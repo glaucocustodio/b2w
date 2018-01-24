@@ -12,6 +12,10 @@ module Model
       collection.insert_one(doc)
     end
 
+    def exists?(filter)
+      collection.find(filter).count > 0
+    end
+
     def all
       collection.find
     end

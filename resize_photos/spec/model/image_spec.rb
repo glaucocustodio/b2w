@@ -6,20 +6,34 @@ describe Model::Image do
     let(:subject_instance) { double(:subject_instance) }
 
     before do
-      expect(Processor::Image).to receive(:new).with("http://foo.com").and_return(image_processor)
-      expect(image_processor).to receive(:resize).with("640x480").and_return("640x480.jpg")
-      expect(image_processor).to receive(:resize).with("384x288").and_return("384x288.jpg")
-      expect(image_processor).to receive(:resize).with("320x240").and_return("320x240.jpg")
       expect(described_class).to receive(:new).and_return(subject_instance)
-      expect(subject_instance).to receive(:insert).with({
-        original_url: "http://foo.com",
-        small: "320x240.jpg",
-        medium: "384x288.jpg",
-        large: "640x480.jpg"
-      })
     end
 
-    it { described_class.save_from_url("http://foo.com") }
+    context "record does not exist" do
+      before do
+        expect(Processor::Image).to receive(:new).with("http://foo.com").and_return(image_processor)
+        expect(image_processor).to receive(:resize).with("640x480").and_return("640x480.jpg")
+        expect(image_processor).to receive(:resize).with("384x288").and_return("384x288.jpg")
+        expect(image_processor).to receive(:resize).with("320x240").and_return("320x240.jpg")
+        expect(subject_instance).to receive(:exists?).with(original_url: "http://foo.com").and_return(false)
+        expect(subject_instance).to receive(:insert).with({
+          original_url: "http://foo.com",
+          small: "320x240.jpg",
+          medium: "384x288.jpg",
+          large: "640x480.jpg"
+        })
+      end
+
+      it { described_class.save_from_url("http://foo.com") }
+    end
+
+    context "record exists" do
+      before do
+        expect(subject_instance).to receive(:exists?).with(original_url: "http://foo.com").and_return(true)
+      end
+
+      it { described_class.save_from_url("http://foo.com") }
+    end
   end
 
   describe "#all" do

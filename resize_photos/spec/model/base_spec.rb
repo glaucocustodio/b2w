@@ -30,4 +30,18 @@ describe Model::Base do
       expect(subject.all.first["a"]).to eq("foo")
     end
   end
+
+  describe "#exists?" do
+    context "true" do
+      before do
+        collection.insert_one({ "a" => "foo" })
+      end
+
+      it { expect(subject.exists?("a" => "foo")).to eq(true) }
+    end
+
+    context "false" do
+      it { expect(subject.exists?("b" => "bar")).to eq(false) }
+    end
+  end
 end

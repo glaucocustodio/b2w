@@ -4,14 +4,18 @@ require_relative "base"
 module Model
   class Image < Base
     def self.save_from_url(url)
-      processor = Processor::Image.new(url)
+      model = new
 
-      new.insert({
-        original_url: url,
-        large: processor.resize("640x480"),
-        medium: processor.resize("384x288"),
-        small: processor.resize("320x240")
-      })
+      unless model.exists?(original_url: url)
+        processor = Processor::Image.new(url)
+
+        model.insert({
+          original_url: url,
+          large: processor.resize("640x480"),
+          medium: processor.resize("384x288"),
+          small: processor.resize("320x240")
+        })
+      end
     end
 
     def all(except: ["_id"])
