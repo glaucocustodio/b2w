@@ -1,0 +1,13 @@
+source "https://rubygems.org"
+
+ruby "2.3.0"
+
+group :development, :test do
+  gem "rspec"
+  gem "webmock"
+  gem "rack-test"
+end
+
+gem "mini_magick", "~> 4.8"
+gem "mongo"
+gem "sinatra"
