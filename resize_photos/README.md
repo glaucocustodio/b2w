@@ -20,6 +20,7 @@ The data are saved into `images` collection.
 
 - ImageMagick or GraphicsMagick command-line tool (check running `convert -version`)
 - MongoDB (running at `127.0.0.1:27017`)
+- Redis (running at `127.0.0.1:6379` for cache)
 
 # Commands
 

@@ -11,3 +11,5 @@ end
 gem "mini_magick", "~> 4.8"
 gem "mongo"
 gem "sinatra"
+gem "redis"
+gem "object-cache"

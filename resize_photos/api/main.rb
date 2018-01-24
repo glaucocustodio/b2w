@@ -1,6 +1,10 @@
 require "sinatra"
 require "json"
+require "redis"
+require "object/cache"
 require_relative "../model/image"
+
+Cache.backend = Redis.new
 
 set :public_dir, "public"
 
@@ -13,11 +17,18 @@ helpers do
       current
     end
   end
+
+  def cache(prefix, expires_after: 3_600)
+    return yield if ENV["RACK_ENV"] == "test"
+    Cache.new(key_prefix: prefix, ttl: expires_after) { yield }
+  end
 end
 
 get "/" do
   content_type :json
 
-  images = Model::Image.new.all
-  set_url_for(images).to_json
+  cache("images") do
+    images = Model::Image.new.all
+    set_url_for(images).to_json
+  end
 end
